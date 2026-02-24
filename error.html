@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex Pokémon</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+    background: #0d0015;
+    background: radial-gradient(circle at 50% 30%, #1a0033 0%, #0a001a 70%, #000000 100%);
+    color: #e0d0ff;
+    font-family: 'Press Start 2P', cursive;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Effet glitch / scanlines légères en fond */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 2px,
+        rgba(255, 80, 200, 0.03) 2px,
+        rgba(255, 80, 200, 0.03) 4px
+    );
+    pointer-events: none;
+    z-index: -1;
+    animation: scan 8s linear infinite;
+}
+
+@keyframes scan {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(100%); }
+}
+
+/* Titre principal → ERROR 404 très grand */
+h1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(4rem, 18vw, 14rem);
+    font-weight: bold;
+    color: #ffeb3b;
+    color: transparent;
+    -webkit-text-stroke: 3px #ffeb3b;
+    text-shadow:
+        0 0 15px #ffeb3b,
+        0 0 35px #ff6f00,
+        0 0 70px #d500f9,
+        0 0 120px #aa00ff;
+    letter-spacing: 0.15em;
+    text-align: center;
+    line-height: 0.85;
+    animation: glitch 4s infinite alternate, flicker 0.15s infinite alternate;
+    user-select: none;
+    z-index: 10;
+}
+
+@keyframes glitch {
+    0%, 100% { transform: translate(-50%, -50%) skew(0deg); }
+    2%  { transform: translate(-52%, -48%) skew(5deg); }
+    4%  { transform: translate(-48%, -52%) skew(-5deg); }
+    6%  { transform: translate(-51%, -49%) skew(3deg); }
+    8%, 100% { transform: translate(-50%, -50%) skew(0deg); }
+}
+
+@keyframes flicker {
+    0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% { opacity: 1; text-shadow: 0 0 30px #ffeb3b; }
+    20%, 24%, 55% { opacity: 0.4; text-shadow: none; }
+}
+
+/* Overlay violet psychique / aura Zarbi */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(170, 0, 255, 0.12) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: -2;
+    animation: pulseAura 12s ease-in-out infinite;
+}
+
+@keyframes pulseAura {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50%      { opacity: 0.9; transform: scale(1.15); }
+}
+
+/* Recherche (optionnelle si tu la remets plus tard) */
+#search {
+    background: rgba(10, 5, 30, 0.7);
+    border: 4px solid #663399;
+    color: #ffeb3b;
+    box-shadow: 0 0 25px rgba(170, 0, 255, 0.4);
+    text-shadow: 0 0 8px #ffeb3b;
+}
+
+/* Cartes Pokémon (style Zarbi / ERROR) */
+.pokemon-card {
+    background: linear-gradient(135deg, #1a0033 0%, #2a004d 100%);
+    border: 4px solid #663399;
+    box-shadow:
+        inset 0 0 20px rgba(0,0,0,0.9),
+        0 0 30px rgba(102, 51, 153, 0.5);
+    color: #d0c0ff;
+}
+
+.pokemon-name {
+    color: #ffeb3b;
+    text-shadow: 0 0 12px #ff6f00, 2px 2px 0 #000;
+}
+
+.types .type {
+    background: #4a148c;
+    border: 2px solid #ffeb3b;
+    color: #ffeb3b;
+    text-shadow: 1px 1px 0 #000;
+}
+
+/* Modal style "lettres Zarbi" */
+.modal-content {
+    background: #0a0015;
+    border: 6px double #663399;
+    box-shadow: 0 0 80px rgba(170, 0, 255, 0.7);
+}
+
+.modal h2 {
+    color: #ffeb3b;
+    text-shadow: 0 0 20px #ff6f00, 0 0 40px #d500f9;
+}
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1><img src="./assets/img/zarbi_interro.png" height="100" width="100"> ERROR <img src="./assets/img/zarbi_interro.png" height="100" width="100"></h1>
+
+
+
+
+</body>
+</html>

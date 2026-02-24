@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokédex Pokémon</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1><img src="./assets/img/pokeball.webp" height="40" width="40"> POKEONLINE <img
+                src="./assets/img/pokeball.webp" height="40" width="40"></h1>
+        <!-- Contrôles en haut à droite -->
+        <div class="top-controls">
+            <div class="pagination-controls">
+                <button id="prev-page" class="page-btn" disabled>◄ Précédent</button>
+                <span id="page-info">Page 1</span>
+                <button id="next-page" class="page-btn">Suivant ►</button>
+                </div>
+            <div class="per-page">
+                <label>Afficher :</label>
+                <select id="per-page-select">
+                    <option value="10" selected>10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    </select>
+                </div>
+            </div>
+        <!-- Menu générations -->
+        <nav class="gen-nav" id="generation-nav">
+            <button class="gen-btn active" data-gen="1" data-limit="151" data-offset="0">Gen 1</button>
+            <button class="gen-btn" data-gen="2" data-limit="100" data-offset="151">Gen 2</button>
+            <button class="gen-btn" data-gen="3" data-limit="135" data-offset="251">Gen 3</button>
+            <button class="gen-btn" data-gen="4" data-limit="107" data-offset="386">Gen 4</button>
+            <button class="gen-btn" data-gen="5" data-limit="156" data-offset="493">Gen 5</button>
+            <button class="gen-btn" data-gen="6" data-limit="72"  data-offset="649">Gen 6</button>
+            <button class="gen-btn" data-gen="7" data-limit="88"  data-offset="721">Gen 7</button>
+            <button class="gen-btn" data-gen="8" data-limit="96"  data-offset="809">Gen 8</button>
+            <button class="gen-btn" data-gen="9" data-limit="120" data-offset="905">Gen 9</button>
+            </nav>
+        <input type="text" id="search" placeholder="RECHERCHER UN POKÉMON PAR NOM...">
+        <div id="pokemon-grid" class="grid"></div>
+    </div>
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <div id="modal-body"></div>
+            </div>
+    </div>
+    <script>// ... (typeFrench, statFrench, capitalize, getTypeColor, fetchNomFr restent identiques)
+        // Variables globales pour pagination
+        let currentPokemonList = []; // tous les Pokémon chargés de la génération
+        let currentPage = 1;
+        let itemsPerPage = 20;
+        let currentOffset = 0;
+        let currentLimit = 151;
+        // Éléments DOM
+        const grid = document.getElementById('pokemon-grid');
+        const searchInput = document.getElementById('search');
+        const modal = document.getElementById('modal');
+        const modalBody = document.getElementById('modal-body');
+        const closeBtn = document.querySelector('.close');
+        const genButtons = document.querySelectorAll('.gen-btn');
+        const perPageSelect = document.getElementById('per-page-select');
+        const prevBtn = document.getElementById('prev-page');
+        const nextBtn = document.getElementById('next-page');
+        const pageInfo = document.getElementById('page-info');
+        // ────────────────────────────────────────────────
+        //  CRÉATION D'UNE CARTE (inchangée)
+        // ────────────────────────────────────────────────
+        function createCard(p, nomFr) {
+            const types = p.types.map(t => t.type.name);
+            const sprite = p.sprites.other?.dream_world?.front_default ||
+                p.sprites.other?.home?.front_default ||
+                p.sprites.front_default;
+            const card = document.createElement('div');
+            card.className = 'pokemon-card';
+            card.setAttribute('data-type1', types[0]);
+            card.style.setProperty('--type1-color', getTypeColor(types[0]));
+            if (types.length >= 2) {
+                card.setAttribute('data-type2', types[1]);
+                card.style.setProperty('--c1', getTypeColor(types[0]));
+                card.style.setProperty('--c2', getTypeColor(types[1]));
+            }
+            card.innerHTML = `<img src="${sprite || ''}" alt="${nomFr}" class="sprite"><h3 class="pokemon-name">${nomFr}</h3><div class="types">${types.map(t => `<span class="type ${t}">${typeFrench[t] || capitalize(t)}</span>`).join('')}</div>`;
+            card.addEventListener('click', async () => {
+                await showDetails(p);
+            });
+            grid.appendChild(card);
+        }
+        // ────────────────────────────────────────────────
+        //  AFFICHER LA PAGE ACTUELLE
+        // ────────────────────────────────────────────────
+            function displayCurrentPage() {
+                grid.innerHTML = '';
+                const start = (currentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                const pageItems = currentPokemonList.slice(start, end);
+
+                // Correction ici : dépacketer l'objet
+                pageItems.forEach(({ p, nomFr }) => createCard(p, nomFr));
+
+                const totalPages = Math.ceil(currentPokemonList.length / itemsPerPage);
+                pageInfo.textContent = `Page ${currentPage} / ${totalPages}`;
+                prevBtn.disabled = currentPage === 1;
+                nextBtn.disabled = currentPage >= totalPages;
+            }
+        // ────────────────────────────────────────────────
+        //  CHARGEMENT D'UNE GÉNÉRATION + STOCKAGE
+        // ────────────────────────────────────────────────
+        async function loadGeneration(offset, limit) {
+            grid.innerHTML = '<div class="spinner-border text-danger" role="status"><span class="visually-hidden">Chargement...</span></div>';
+            try {
+                const res = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`);
+                const data = await res.json();
+                const pokemonData = await Promise.all(
+                    data.results.map(async entry => {
+                        const p = await fetch(entry.url).then(r => r.json());
+                        const nomFr = await fetchNomFr(p.species.url);
+                        return { p, nomFr };
+                    })
+                );
+                currentPokemonList = pokemonData;
+                currentPage = 1;
+                displayCurrentPage();
+            } catch (err) {
+                grid.innerHTML = '<p style="color:#c00; text-align:center; grid-column:1/-1; padding:40px 0;">Erreur de chargement</p>';
+                console.error(err);
+            }
+        }
+        // ────────────────────────────────────────────────
+        //  ÉVÈNEMENTS PAGINATION & SÉLECTEUR
+        // ────────────────────────────────────────────────
+        perPageSelect.addEventListener('change', () => {
+            itemsPerPage = parseInt(perPageSelect.value);
+            currentPage = 1;
+            displayCurrentPage();
+        });
+        prevBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayCurrentPage();
+            }
+        });
+        nextBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(currentPokemonList.length / itemsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayCurrentPage();
+            }
+        });
+        // Recherche (filtre sur la liste complète)
+            function setupSearch() {
+                searchInput.addEventListener('input', e => {
+                    const term = e.target.value.toLowerCase().trim();
+
+                    if (!term) {
+                        document.querySelector('.top-controls').style.display = 'flex';
+                        currentPage = 1;
+                        displayCurrentPage();
+                        return;
+                    }
+
+                    const filtered = currentPokemonList.filter(({ nomFr }) =>
+                        nomFr.toLowerCase().includes(term)
+                    );
+
+                    grid.innerHTML = '';
+
+                    // Correction ici : dépacketer aussi dans la recherche
+                    filtered.forEach(({ p, nomFr }) => createCard(p, nomFr));
+
+                    document.querySelector('.top-controls').style.display = 'none';
+                });
+            }
+        // Reset pagination quand on change de génération ou quand on vide la recherche
+        searchInput.addEventListener('input', e => {
+            if (!e.target.value.trim()) {
+                document.querySelector('.top-controls').style.display = 'flex';
+                displayCurrentPage();
+            }
+        });
+        // Événements générations (inchangés sauf reset page)
+        document.querySelectorAll('.gen-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.gen-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const offset = parseInt(btn.dataset.offset);
+                const limit = parseInt(btn.dataset.limit);
+                loadGeneration(offset, limit);
+            });
+        });
+        // Fermeture modal
+        closeBtn.onclick = () => modal.style.display = 'none';
+        window.onclick = e => { if (e.target === modal) modal.style.display = 'none'; };
+        // Démarrage
+        loadGeneration(0, 151);
+        setupSearch();</script>
+</body>
+
+</html>
