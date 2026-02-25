@@ -7,7 +7,8 @@
     <title>Pokédex Pokémon</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle. min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM  +D2scQbITxI" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="./assets/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -26,9 +27,11 @@
             <div class="per-page">
                 <label>Afficher :</label>
                 <select id="per-page-select">
-                    <option value="10" selected>10</option>
+                    <option value="0" selected>/</option>
+                    <option value="10">10</option>
                     <option value="20">20</option>
                     <option value="50">50</option>
+                    <option value="1025">Tous</option>
                     </select>
                 </div>
             </div>
@@ -43,8 +46,32 @@
             <button class="gen-btn" data-gen="7" data-limit="88"  data-offset="721">Gen 7</button>
             <button class="gen-btn" data-gen="8" data-limit="96"  data-offset="809">Gen 8</button>
             <button class="gen-btn" data-gen="9" data-limit="120" data-offset="905">Gen 9</button>
-            </nav>
-        <input type="text" id="search" placeholder="RECHERCHER UN POKÉMON PAR NOM...">
+            <button class="gen-btn" data-gen="9" data-limit="1025" data-offset="0">All</button>
+        </nav>
+        <!-- <nav class="ty-nav" id="type-nav">
+            <button class="gen-btn">Normal</button>
+            <button class="gen-btn">Feu</button>
+            <button class="gen-btn">Eau</button>
+            <button class="gen-btn">Elec</button>
+            <button class="gen-btn">Herbe</button>
+            <button class="gen-btn">Glace</button>
+            <button class="gen-btn">Combat</button>
+            <button class="gen-btn">Poison</button>
+            <button class="gen-btn">Sol</button>
+            <button class="gen-btn">Vol</button>
+            <button class="gen-btn">Psy</button>
+            <button class="gen-btn">Insecte</button>
+            <button class="gen-btn">Roche</button>
+            <button class="gen-btn">Spectre</button>
+            <button class="gen-btn">Dragon</button>
+            <button class="gen-btn">Ténèbre</button>
+            <button class="gen-btn">Acier</button>
+            <button class="gen-btn">Fée</button>
+        </nav> -->
+        <nav class="connect-nav">
+            <button class="login-btn" id="btnLogin">Se Connecter</button>
+        </nav>
+        <input type="text" id="search" placeholder="RECHERCHER UN POKÉMON PAR ID, NOM OU TYPE...">
         <div id="pokemon-grid" class="grid"></div>
     </div>
     <div id="modal" class="modal">
@@ -53,13 +80,49 @@
             <div id="modal-body"></div>
             </div>
     </div>
-    <script>// ... (typeFrench, statFrench, capitalize, getTypeColor, fetchNomFr restent identiques)
-        // Variables globales pour pagination
+    <script>
+            const typeFrench = {
+                normal: 'Normal', fighting: 'Combat', flying: 'Vol', poison: 'Poison',
+                ground: 'Sol', rock: 'Roche', bug: 'Insecte', ghost: 'Spectre',
+                steel: 'Acier', fire: 'Feu', water: 'Eau', grass: 'Plante',
+                electric: 'Électrik', psychic: 'Psy', ice: 'Glace', dragon: 'Dragon',
+                dark: 'Ténèbres', fairy: 'Fée'
+            };
+            const statFrench = {
+                hp: 'PV', attack: 'Attaque', defense: 'Défense', 'special-attack': 'Att. Spé.', 'special-defense': 'Déf. Spé.', speed: 'Vitesse'
+            };
+
+                function capitalize(str) {
+                    return str.charAt(0).toUpperCase() + str.slice(1);
+                }
+                function getTypeColor(type) {
+                    const colors = {
+                        normal: '#A8A77A', fire: '#EE8130', water: '#6390F0',
+                        electric: '#F7D02C', grass: '#7AC74C', ice: '#96D9D6',
+                        fighting: '#C22E28', poison: '#A33EA1', ground: '#E2BF65',
+                        flying: '#A98FF3', psychic: '#F95587', bug: '#A6B91A',
+                        rock: '#B6A136', ghost: '#735797', dragon: '#6F35FC',
+                        dark: '#705746', steel: '#B7B7CE', fairy: '#D685AD'
+                    };
+                    return colors[type] || '#777';
+                }
+                async function fetchNomFr(speciesUrl) {
+                    try {
+                        const res = await fetch(speciesUrl);
+                        if (!res.ok) throw new Error();
+                        const data = await res.json();
+                        return data.names.find(n => n.language.name === "fr")?.name || capitalize(data.name);
+                    } catch {
+                        return "Erreur";
+                    }
+                }
+
+
         let currentPokemonList = []; // tous les Pokémon chargés de la génération
         let currentPage = 1;
-        let itemsPerPage = 20;
+        let itemsPerPage = 1025;
         let currentOffset = 0;
-        let currentLimit = 151;
+        let currentLimit = 1025;
         // Éléments DOM
         const grid = document.getElementById('pokemon-grid');
         const searchInput = document.getElementById('search');
@@ -71,6 +134,55 @@
         const prevBtn = document.getElementById('prev-page');
         const nextBtn = document.getElementById('next-page');
         const pageInfo = document.getElementById('page-info');
+        const isLogged = document.getElementById('btnLogin')
+
+            // ────────────────────────────────────────────────
+            // GESTION CONNEXION / DÉCONNEXION
+            // ────────────────────────────────────────────────
+
+            const loginBtn = document.getElementById('btnLogin');
+
+            // Vérifie si déjà connecté au chargement
+            function checkLoginStatus() {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                if (isLoggedIn) {
+                    loginBtn.textContent = 'Se Déconnecter';
+                    loginBtn.classList.add('logged-in'); // optionnel : pour styliser différemment
+                } else {
+                    loginBtn.textContent = 'Se Connecter';
+                    loginBtn.classList.remove('logged-in');
+                }
+            }
+
+                // Fonction login (simulée)
+                function login() {
+                    const userToken = "abc-123-xyz-" + Date.now(); // token fictif unique
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('authToken', userToken);
+                    checkLoginStatus();
+                    alert("Vous êtes maintenant connecté ! (simulation)");
+                }
+
+                // Fonction logout
+                function logout() {
+                    localStorage.removeItem('isLoggedIn');
+                    localStorage.removeItem('authToken');
+                    checkLoginStatus();
+                    alert("Vous êtes déconnecté !");
+                }
+
+            // Événement clic sur le bouton
+            loginBtn.addEventListener('click', () => {
+                const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                if (isLoggedIn) {
+                    logout();
+                } else {
+                    login();
+                }
+            });
+
+            // Vérifie l’état au chargement de la page
+            checkLoginStatus();
         // ────────────────────────────────────────────────
         //  CRÉATION D'UNE CARTE (inchangée)
         // ────────────────────────────────────────────────
@@ -94,6 +206,100 @@
             });
             grid.appendChild(card);
         }
+
+        async function showDetails(p) {
+    const types = p.types.map(t => t.type.name);
+
+    // Correction : fallback robuste pour l'image
+    const officialArt = p.sprites.other?.['official-artwork']?.front_default ||
+                        p.sprites.other?.dream_world?.front_default ||
+                        p.sprites.other?.home?.front_default ||
+                        p.sprites.front_default ||
+                        'https://via.placeholder.com/260?text=?'; // image de secours si tout échoue
+
+    const nameFr = await fetchNomFr(p.species.url);
+    const id = p.id.toString().padStart(3, '0');
+
+    // Ordre classique des stats pour le radar
+    const statOrder = ['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'];
+    const statLabels = statOrder.map(s => statFrench[s] || s);
+    const statValues = statOrder.map(s => {
+        const stat = p.stats.find(st => st.stat.name === s);
+        return stat ? stat.base_stat : 0;
+    });
+
+    modalBody.innerHTML = `
+        <img src="${officialArt}" alt="${nameFr}" class="art">
+        <h2>#${id} ${nameFr}</h2>
+        <div class="info">
+            <div>Hauteur<br>${(p.height / 10).toFixed(1)} m</div>
+            <div>Poids<br>${(p.weight / 10).toFixed(1)} kg</div>
+        </div>
+        <div class="modal-types">
+            <strong>Types :</strong>
+            <div style="margin-top:0.6rem;">
+                ${types.map(t => `<span class="type ${t}">${typeFrench[t] || capitalize(t)}</span>`).join('')}
+            </div>
+        </div>
+        <div class="stats-container">
+            <canvas id="statsRadar"></canvas>
+        </div>
+    `;
+
+    modal.style.display = 'flex';
+
+    // Graphique radar (inchangé)
+    setTimeout(() => {
+        const ctx = document.getElementById('statsRadar').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: statLabels,
+                datasets: [{
+                    label: 'Stats',
+                    data: statValues,
+                    backgroundColor: 'rgba(238, 21, 21, 0.18)',
+                    borderColor: '#ee1515',
+                    borderWidth: 3,
+                    pointBackgroundColor: '#ffcb05',
+                    pointBorderColor: '#000',
+                    pointBorderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(255,255,255,0.15)' },
+                        grid: { color: 'rgba(255,255,255,0.12)' },
+                        pointLabels: {
+                            color: '#ffeb3b',
+                            font: { size: 13, family: "'Press Start 2P', cursive" }
+                        },
+                        ticks: {
+                            color: '#ddd',
+                            backdropColor: 'transparent',
+                            stepSize: 20,
+                            min: 0,
+                            max: 200
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                },
+                animation: {
+                    duration: 1400,
+                    easing: 'easeOutQuart'
+                }
+            }
+        });
+    }, 100);
+}
+
         // ────────────────────────────────────────────────
         //  AFFICHER LA PAGE ACTUELLE
         // ────────────────────────────────────────────────
@@ -156,29 +362,77 @@
             }
         });
         // Recherche (filtre sur la liste complète)
-            function setupSearch() {
+        function setupSearch() {
                 searchInput.addEventListener('input', e => {
                     const term = e.target.value.toLowerCase().trim();
 
                     if (!term) {
+                        // Recherche vide → retour à la liste complète avec pagination
                         document.querySelector('.top-controls').style.display = 'flex';
                         currentPage = 1;
                         displayCurrentPage();
                         return;
                     }
 
-                    const filtered = currentPokemonList.filter(({ nomFr }) =>
-                        nomFr.toLowerCase().includes(term)
-                    );
+                    // Liste des noms de types en minuscule pour comparaison rapide
+                    const typeNamesFr = Object.values(typeFrench).map(t => t.toLowerCase());
 
-                    grid.innerHTML = '';
+                    // On découpe en mots (séparés par espace)
+                    const words = term.split(/\s+/).filter(w => w.length > 0);
 
-                    // Correction ici : dépacketer aussi dans la recherche
-                    filtered.forEach(({ p, nomFr }) => createCard(p, nomFr));
+                    let filtered = currentPokemonList;
 
-                    document.querySelector('.top-controls').style.display = 'none';
+                    words.forEach(word => {
+                        // 1. Recherche par ID (si c'est un nombre ou commence par # ou 00X)
+                        if (/^\d+$/.test(word) || word.startsWith('#') || word.match(/^\d{3}$/)) {
+                            const searchId = word.replace('#', '').padStart(3, '0');
+                            filtered = filtered.filter(({ p }) =>
+                                p.id.toString().padStart(3, '0').includes(searchId)
+                            );
+                            return;
+                        }
+
+                        // 2. Est-ce que ce mot ressemble à un type ?
+                        const matchedType = typeNamesFr.find(t =>
+                            t.includes(word) || word.includes(t) || t.startsWith(word)
+                        );
+
+                        if (matchedType) {
+                            // Filtre par type (un Pokémon est gardé s'il a AU MOINS ce type)
+                            const typeKey = Object.keys(typeFrench).find(k =>
+                                typeFrench[k].toLowerCase() === matchedType
+                            );
+                            filtered = filtered.filter(({ p }) =>
+                                p.types.some(t => t.type.name.toLowerCase() === typeKey)
+                            );
+                        } else {
+                            // Sinon → filtre par nom de Pokémon
+                            filtered = filtered.filter(({ nomFr }) =>
+                                nomFr.toLowerCase().includes(word)
+                            );
+                        }
+                    });
+
+        // Affichage
+        grid.innerHTML = '';
+        filtered.forEach(({ p, nomFr }) => createCard(p, nomFr));
+
+        // Masquer la pagination quand on filtre activement
+        document.querySelector('.top-controls').style.display = 'none';
+
+        // Réinitialiser à la page 1
+        currentPage = 1;
+    });
+}
+            document.querySelectorAll('.ty-nav .gen-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.ty-nav .gen-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    console.log("Filtrer par type :", btn.textContent);
                 });
-            }
+            });
+
         // Reset pagination quand on change de génération ou quand on vide la recherche
         searchInput.addEventListener('input', e => {
             if (!e.target.value.trim()) {
@@ -201,7 +455,8 @@
         window.onclick = e => { if (e.target === modal) modal.style.display = 'none'; };
         // Démarrage
         loadGeneration(0, 151);
-        setupSearch();</script>
+        setupSearch();
+        </script>
 </body>
 
 </html>
