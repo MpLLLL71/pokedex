@@ -2,7 +2,12 @@
 
 Un Pokédex moderne et stylé inspiré de l'univers Pokémon, avec un design rétro pixel-art et des animations fluides.
 
+v1:
 <img width="1348" height="894" alt="image" src="https://github.com/user-attachments/assets/031fb31e-aa0d-4bc6-8000-033c11eff337" />
+
+v2:
+<img width="1920" height="951" alt="image" src="https://github.com/user-attachments/assets/e42ae4b9-4d6f-4476-b879-84104ab75f36" />
+<img width="1904" height="935" alt="image" src="https://github.com/user-attachments/assets/6c5adf9a-6aea-44b8-a8aa-d1135b4aebbe" />
 
 ## Fonctionnalités principales
 
