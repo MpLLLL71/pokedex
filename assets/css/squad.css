@@ -1,0 +1,370 @@
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: 'Press Start 2P', cursive;
+    
+    /* 1. Le fond bicolore avec la coupure diagonale nette */
+    /* On utilise un linear-gradient à 110deg pour imiter l'angle de l'image */
+    background: linear-gradient(
+        110deg, 
+        #e33529 0%, 
+        #e33529 45%, 
+        #f5f5f5 45.1%, 
+        #f5f5f5 100%
+    );
+    
+    /* 2. Ajout de la Pokéball en filigrane à droite */
+    background-image: 
+        /* La Pokéball stylisée (cercle blanc transparent + bordure) */
+        radial-gradient(circle, transparent 35%, rgba(0,0,0,0.05) 36%, rgba(0,0,0,0.05) 40%, transparent 41%),
+        /* La ligne horizontale de la Pokéball */
+        linear-gradient(180deg, transparent 48%, rgba(0,0,0,0.05) 48.5%, rgba(0,0,0,0.05) 51.5%, transparent 52%),
+        /* Le fond bicolore (on le répète ici pour la superposition) */
+        linear-gradient(110deg, #e33529 45%, #f5f5f5 45.1%);
+    
+    /* On positionne la Pokéball à droite comme sur l'image */
+    background-position: 85% 50%, center, center;
+    background-size: 500px 500px, 100% 100%, 100% 100%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* Optionnel : Ajout d'un léger grain/texture pour le côté "UI de console" */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.connect-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    margin: 20px 0 30px;
+    padding: 0 10px;
+}
+
+.connect-nav .login-btn {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    padding: 10px 16px;
+    color: #fff;
+    border: 3px solid #000;
+    border-radius: 10px;
+    box-shadow: 5px 5px 0 #000;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    min-width: 80px;
+    text-align: center;
+}
+
+.connect-nav .login-btn:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 7px 7px 0 #000;
+    filter: brightness(1.15);
+}
+
+.connect-nav .login-btn.active {
+    box-shadow: 8px 8px 0 #000;
+    transform: translateY(-2px) scale(1.08);
+    border-color: #ffcb05;
+    outline: 3px solid rgba(255, 203, 5, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .connect-nav .login-btn {
+        padding: 8px 12px;
+        font-size: 0.7rem;
+        min-width: 70px;
+    }
+}
+
+.login-btn {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.9rem;
+    padding: 10px 20px;
+    background: linear-gradient(45deg, #4CAF50, #66BB6A);
+    color: #fff;
+    border: 4px solid #000;
+    border-radius: 12px;
+    box-shadow: 6px 6px 0 #000;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.login-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 8px 8px 0 #000;
+    background: #666;
+}
+
+.login-btn.logged-in {
+    background: linear-gradient(45deg, #8b1626, #af1212);
+    color: #fff;
+    border: 4px solid #000;
+}
+
+.equipe-btn {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.9rem;
+    padding: 10px 20px;
+    background: #333;
+    color: #fff;
+    border: 4px solid #000;
+    border-radius: 12px;
+    box-shadow: 6px 6px 0 #000;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.equipe-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 8px 8px 0 #000;
+    background: #333;
+}
+
+.combat-btn {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.9rem;
+    padding: 10px 20px;
+    background: #333;
+    color: #fff;
+    border: 4px solid #000;
+    border-radius: 12px;
+    box-shadow: 6px 6px 0 #000;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.combat-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 8px 8px 0 #000;
+    background: #333;
+}
+
+/* Style de base d'un slot (la capsule) */
+.slot {
+    position: relative;
+    display: flex;
+    align-items: center;
+    height: 70px;
+    padding: 0 20px;
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 50px 10px 10px 50px;
+    /* Bord arrondi à gauche style Switch */
+    box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+/* Style spécifique pour un slot vide */
+.slot.empty {
+    background: rgba(255, 255, 255, 0.5);
+    border: 2px dashed #bbb;
+    box-shadow: none;
+}
+
+/* Le petit "+" au centre des slots vides */
+.slot-add {
+    font-size: 24px;
+    color: #bbb;
+    margin-left: 10px;
+    /* Aligné avec l'endroit où sera l'icône */
+}
+
+/* Effet au survol (comme la sélection dans le jeu) */
+.slot:hover {
+    transform: translateX(10px);
+    /* Petit décalage vers la droite */
+    border-color: #333;
+    background-color: #f0f0f0;
+}
+
+/* Petit indicateur de sélection (la flèche noire sur ton image) */
+.slot:hover::before {
+    content: '▶';
+    position: absolute;
+    left: -25px;
+    color: black;
+    font-size: 20px;
+}
+
+#search_squad {
+    width: 100%;
+    padding: 18px;
+    font-size: 1.1rem;
+    font-family: inherit;
+    border: 5px solid #000;
+    border-radius: 20px;
+    margin: 20px 0 30px;
+    box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.25);
+    background: rgba(255, 255, 255, 0.92);
+    text-transform: uppercase;
+    text-align: center;
+}
+
+#search_squad::placeholder {
+    color: #555;
+}
+
+/* On ajuste le titre de l'équipe pour qu'il soit lisible sur le blanc */
+.team-wrapper h2 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #333;
+    text-shadow: none;
+    text-align: center;
+}
+
+.container {
+    z-index: 10;
+    margin-bottom: 50px; 
+}
+
+/* Le wrapper devient le parent des deux colonnes */
+.team-wrapper {
+    display: flex;
+    flex-direction: row; /* Aligne côte à côte */
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100vw;
+    padding: 0 40px;
+    margin-top: 2vh;
+    gap: 50px; /* Espace entre la liste et les détails */
+}
+
+/* La colonne de gauche (Liste) */
+.team-sidebar {
+    flex: 0 0 400px; /* Largeur fixe pour la liste */
+    display: flex;
+    flex-direction: column;
+}
+
+/* La colonne de droite (Détails) */
+.details-panel {
+    flex: 1; /* Prend tout l'espace restant à droite */
+    background: rgba(255, 255, 255, 0.8);
+    border: 4px solid #333;
+    border-radius: 20px;
+    min-height: 500px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
+}
+
+/* On ajuste la grille pour qu'elle ne force plus le centrage auto */
+.team-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    margin: 0; /* Supprime le margin auto pour coller à gauche */
+}
+
+/* L'image du Pokémon à gauche */
+.team-sprite {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-right: 15px;
+    filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.2));
+}
+
+/* Le bloc texte (Nom + Niveau) */
+.team-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.team-name {
+    font-size: 0.8rem; /* Press Start 2P est assez grosse */
+    text-transform: uppercase;
+}
+
+.team-level {
+    font-size: 0.6rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+.details-panel {
+    background: #1a1a1a;
+    border: 4px solid #333;
+    border-radius: 15px;
+    padding: 20px;
+    color: white;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+}
+
+.placeholder-text {
+    margin-top: 50%;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    opacity: 0.7;
+}
+
+.details-header {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.pixel-text {
+    font-size: 1.8rem;
+    color: #ffcb05; /* Jaune Pokémon */
+    text-shadow: 2px 2px #3b4cca; /* Bleu Pokémon */
+    margin: 0;
+}
+
+.big-sprite {
+    width: 180px;
+    height: 180px;
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.2));
+    margin-bottom: 20px;
+}
+
+.chart-container {
+    width: 100%;
+    max-width: 300px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.btn-remove {
+    margin-top: 20px;
+    background: #c00;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.btn-remove:hover {
+    background: #ff0000;
+    transform: scale(1.05);
+}

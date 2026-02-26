@@ -4,58 +4,48 @@
             box-sizing: border-box;
         }
 
-        /* body {
-            background: linear-gradient(135deg, #EE1515 0%, #FFFFFF 50%, #EE1515 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            font-family: 'Press Start 2P', cursive;
-            color: #000;
-            min-height: 100vh;
-            padding: 20px;
-        } */
+        body {
+            /* Couleurs emblématiques : Rouge Pokedex, Blanc et Noir */
+            background: linear-gradient(180deg, #cc0000 0%, #cc0000 45%, #333 45%, #333 55%, #ffffff 55%, #ffffff 100%);
+            background-size: 100% 110.5vh;
+            background-attachment: fixed;
 
-                                body {
-                                    /* Couleurs emblématiques : Rouge Pokedex, Blanc et Noir */
-                                    background: linear-gradient(180deg, #cc0000 0%, #cc0000 45%, #333 45%, #333 55%, #ffffff 55%, #ffffff 100%);
-                                    background-size: 100% 100vh;
-                                    background-attachment: fixed;
-                
-                                    /* Police pixel art indispensable */
-                                    font-family: 'Press Start 2P', cursive;
-                                    color: #333;
-                
-                                    min-height: 100vh;
-                                    margin: 0;
-                                    padding: 40px;
-                                    display: flex;
-                                    flex-direction: column;
-                                    align-items: center;
-                
-                                    /* Petit effet de scanline pour le côté rétro écran cathodique */
-                                    background-image: repeating-linear-gradient(0deg,
-                                            rgba(0, 0, 0, 0.05) 0px,
-                                            rgba(0, 0, 0, 0.05) 1px,
-                                            transparent 1px,
-                                            transparent 2px),
-                                        linear-gradient(180deg, #cc0000 0%, #cc0000 48%, #333 48%, #333 52%, #ffffff 52%, #ffffff 100%);
-                                }
-            
-                
-                                /* Le bouton central de la Pokeball en pseudo-élément */
-                                body::before {
-                                    content: "";
-                                    position: relative;
-                                    top: 50%;
-                                    left: 50%;
-                                    transform: translate(-50%, -50%);
-                                    width: 80px;
-                                    height: 80px;
-                                    background: #fff;
-                                    border: 10px solid #333;
-                                    border-radius: 50%;
-                                    z-index: 10;
-                                    box-shadow: inset 0 0 0 5px #fff, inset 0 0 0 10px #333;
-                                }
+            /* Police pixel art indispensable */
+            font-family: 'Press Start 2P', cursive;
+            color: #333;
+
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            /* Petit effet de scanline pour le côté rétro écran cathodique */
+            background-image: repeating-linear-gradient(0deg,
+                    rgba(0, 0, 0, 0.05) 0px,
+                    rgba(0, 0, 0, 0.05) 1px,
+                    transparent 1px,
+                    transparent 2px),
+                linear-gradient(180deg, #cc0000 0%, #cc0000 48%, #333 48%, #333 52%, #ffffff 52%, #ffffff 100%);
+        }
+
+
+        /* Le bouton central de la Pokeball en pseudo-élément */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: #fff;
+            border: 10px solid #333;
+            border-radius: 50%;
+            z-index: -5;
+            box-shadow: inset 0 0 0 5px #fff, inset 0 0 0 10px #333;
+        }
 
         @keyframes gradientShift {
             0% {
@@ -79,8 +69,8 @@
         h1 {
             text-align: center;
             font-size: clamp(2em, 6vw, 4em);
-            color: #fff;
-            text-shadow: 6px 6px 0 #000;
+            color: #FFCB05;
+            text-shadow: 6px 6px 0 #2887b3;
             background: linear-gradient(90deg, #EE1515, #FFCB05, #EE1515);
             background-size: 200% 100%;
             animation: titleGradient 6s linear infinite;
@@ -147,50 +137,49 @@
             background-origin: border-box;
         }
 
-.pokemon-card[data-type2] {
-    position: relative;
-    background: linear-gradient(to bottom, 
-        var(--c1) 0%, 
-        var(--c1) 20%, 
-        var(--c2) 90%, 
-        var(--c2) 100%
-    );
-    background-repeat: no-repeat;
-    background-size: cover;
-    
-    border: 5px solid transparent; 
-    
-    z-index: 1;
-}
+        .pokemon-card[data-type2] {
+            position: relative;
+            background: linear-gradient(to bottom,
+                    var(--c1) 0%,
+                    var(--c1) 20%,
+                    var(--c2) 90%,
+                    var(--c2) 100%);
+            background-repeat: no-repeat;
+            background-size: cover;
 
-.pokemon-card[data-type2]::before {
-    content: "";
-    position: absolute;
-    inset: calc(var(--border-width) * -1);
-    padding: var(--border-width);
-    border-radius: 20px;
-    
-    background: linear-gradient(to top, var(--c1) 50%, var(--c2) 50%);
-    
-    -webkit-mask: 
-        linear-gradient(#fff 0 0) content-box, 
-        linear-gradient(#fff 0 0);
-    mask: 
-        linear-gradient(#fff 0 0) content-box, 
-        linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    
-    pointer-events: none;
-    /* ICI : On passe au-dessus du background (0), mais le contenu sera à 2+ */
-    z-index: 2; 
-}
+            border: 5px solid transparent;
 
-/* On force le contenu (image, nom, types) à passer au-dessus de la bordure */
-.pokemon-card[data-type2] > * {
-    position: relative;
-    z-index: 3;
-}
+            z-index: 1;
+        }
+
+        .pokemon-card[data-type2]::before {
+            content: "";
+            position: absolute;
+            inset: calc(var(--border-width) * -1);
+            padding: var(--border-width);
+            border-radius: 20px;
+
+            background: linear-gradient(to top, var(--c1) 50%, var(--c2) 50%);
+
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+
+            pointer-events: none;
+            /* ICI : On passe au-dessus du background (0), mais le contenu sera à 2+ */
+            z-index: 2;
+        }
+
+        /* On force le contenu (image, nom, types) à passer au-dessus de la bordure */
+        .pokemon-card[data-type2]>* {
+            position: relative;
+            z-index: 3;
+        }
 
         .pokemon-card[data-type1="normal"] {
             --type1-color: #A8A77A;
@@ -418,9 +407,9 @@
             border: 6px solid #ffd700;
             border-image: linear-gradient(to right, #ee1515, #ffcb05, #ee1515) 1;
             border-radius: 24px;
-            padding: 2.5rem 2rem 2rem;
+            padding: 1.5rem 1.5rem 1.5rem;
             max-width: 90%;
-            max-height: 92vh;
+            max-height: 95vh;
             overflow-y: auto;
             position: relative;
             box-shadow:
@@ -431,6 +420,7 @@
             color: #f0f0f0;
             text-align: center;
             animation: modalPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow: hidden;
         }
 
         @keyframes modalPop {
@@ -643,181 +633,258 @@
         }
 
         /* Navigation par type ──────────────────────────────────────────────── */
-.ty-nav {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px 14px;
-    margin: 20px 0 30px;
-    padding: 0 10px;
-}
+        .ty-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px 14px;
+            margin: 20px 0 30px;
+            padding: 0 10px;
+        }
 
-.ty-nav .gen-btn {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.8rem;
-    padding: 10px 16px;
-    color: #fff;
-    border: 3px solid #000;
-    border-radius: 10px;
-    box-shadow: 5px 5px 0 #000;
-    cursor: pointer;
-    transition: all 0.18s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    min-width: 80px;
-    text-align: center;
-}
+        .ty-nav .gen-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            padding: 10px 16px;
+            color: #fff;
+            border: 3px solid #000;
+            border-radius: 10px;
+            box-shadow: 5px 5px 0 #000;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 80px;
+            text-align: center;
+        }
 
-/* Couleurs identiques à celles des types dans les cartes */
-.ty-nav .gen-btn:nth-child(1)  { background-color: #A8A77A; } /* Normal   */
-.ty-nav .gen-btn:nth-child(2)  { background-color: #EE8130; } /* Feu      */
-.ty-nav .gen-btn:nth-child(3)  { background-color: #6390F0; } /* Eau      */
-.ty-nav .gen-btn:nth-child(4)  { background-color: #F7D02C; color: #000; } /* Électrik */
-.ty-nav .gen-btn:nth-child(5)  { background-color: #7AC74C; } /* Herbe    */
-.ty-nav .gen-btn:nth-child(6)  { background-color: #96D9D6; color: #000; } /* Glace    */
-.ty-nav .gen-btn:nth-child(7)  { background-color: #C22E28; } /* Combat   */
-.ty-nav .gen-btn:nth-child(8)  { background-color: #A33EA1; } /* Poison   */
-.ty-nav .gen-btn:nth-child(9)  { background-color: #E2BF65; color: #000; } /* Sol      */
-.ty-nav .gen-btn:nth-child(10) { background-color: #A98FF3; color: #000; } /* Vol      */
-.ty-nav .gen-btn:nth-child(11) { background-color: #F95587; } /* Psy      */
-.ty-nav .gen-btn:nth-child(12) { background-color: #A6B91A; } /* Insecte  */
-.ty-nav .gen-btn:nth-child(13) { background-color: #B6A136; } /* Roche    */
-.ty-nav .gen-btn:nth-child(14) { background-color: #735797; } /* Spectre  */
-.ty-nav .gen-btn:nth-child(15) { background-color: #6F35FC; } /* Dragon   */
-.ty-nav .gen-btn:nth-child(16) { background-color: #705746; } /* Ténèbres */
-.ty-nav .gen-btn:nth-child(17) { background-color: #B7B7CE; color: #000; } /* Acier    */
-.ty-nav .gen-btn:nth-child(18) { background-color: #D685AD; } /* Fée      */
+        /* Couleurs identiques à celles des types dans les cartes */
+        .ty-nav .gen-btn:nth-child(1) {
+            background-color: #A8A77A;
+        }
 
-/* Effet hover commun */
-.ty-nav .gen-btn:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 7px 7px 0 #000;
-    filter: brightness(1.15);
-}
+        /* Normal   */
+        .ty-nav .gen-btn:nth-child(2) {
+            background-color: #EE8130;
+        }
 
-/* Bouton actif (optionnel - si tu veux marquer le type sélectionné) */
-.ty-nav .gen-btn.active {
-    box-shadow: 8px 8px 0 #000;
-    transform: translateY(-2px) scale(1.08);
-    border-color: #ffcb05;
-    outline: 3px solid rgba(255,203,5,0.5);
-}
+        /* Feu      */
+        .ty-nav .gen-btn:nth-child(3) {
+            background-color: #6390F0;
+        }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .ty-nav .gen-btn {
-        padding: 8px 12px;
-        font-size: 0.7rem;
-        min-width: 70px;
-    }
-}
+        /* Eau      */
+        .ty-nav .gen-btn:nth-child(4) {
+            background-color: #F7D02C;
+            color: #000;
+        }
 
-.connect-nav {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px 14px;
-    margin: 20px 0 30px;
-    padding: 0 10px;
-}
+        /* Électrik */
+        .ty-nav .gen-btn:nth-child(5) {
+            background-color: #7AC74C;
+        }
 
-.connect-nav .login-btn {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.8rem;
-    padding: 10px 16px;
-    color: #fff;
-    border: 3px solid #000;
-    border-radius: 10px;
-    box-shadow: 5px 5px 0 #000;
-    cursor: pointer;
-    transition: all 0.18s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    min-width: 80px;
-    text-align: center;
-}
+        /* Herbe    */
+        .ty-nav .gen-btn:nth-child(6) {
+            background-color: #96D9D6;
+            color: #000;
+        }
 
-.connect-nav .login-btn:hover {
-    transform: translateY(-3px) scale(1.05);
-    box-shadow: 7px 7px 0 #000;
-    filter: brightness(1.15);
-}
+        /* Glace    */
+        .ty-nav .gen-btn:nth-child(7) {
+            background-color: #C22E28;
+        }
 
-.connect-nav .login-btn.active {
-    box-shadow: 8px 8px 0 #000;
-    transform: translateY(-2px) scale(1.08);
-    border-color: #ffcb05;
-    outline: 3px solid rgba(255,203,5,0.5);
-}
+        /* Combat   */
+        .ty-nav .gen-btn:nth-child(8) {
+            background-color: #A33EA1;
+        }
 
-/* Responsive */
-@media (max-width: 768px) {
-    .connect-nav .login-btn {
-        padding: 8px 12px;
-        font-size: 0.7rem;
-        min-width: 70px;
-    }
-}
+        /* Poison   */
+        .ty-nav .gen-btn:nth-child(9) {
+            background-color: #E2BF65;
+            color: #000;
+        }
 
-.login-btn {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.9rem;
-    padding: 10px 20px;
-    background: linear-gradient(45deg, #4CAF50, #66BB6A);
-    color: #fff;
-    border: 4px solid #000;
-    border-radius: 12px;
-    box-shadow: 6px 6px 0 #000;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+        /* Sol      */
+        .ty-nav .gen-btn:nth-child(10) {
+            background-color: #A98FF3;
+            color: #000;
+        }
 
-.login-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 8px 8px 0 #000;
-    background: #666;
-}
+        /* Vol      */
+        .ty-nav .gen-btn:nth-child(11) {
+            background-color: #F95587;
+        }
 
-.login-btn.logged-in {
-    background: linear-gradient(45deg, #8b1626, #af1212);
-    color: #fff;
-    border: 4px solid #000;
-}
+        /* Psy      */
+        .ty-nav .gen-btn:nth-child(12) {
+            background-color: #A6B91A;
+        }
 
-.equipe-btn {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.9rem;
-    padding: 10px 20px;
-    background: #333;
-    color: #fff;
-    border: 4px solid #000;
-    border-radius: 12px;
-    box-shadow: 6px 6px 0 #000;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+        /* Insecte  */
+        .ty-nav .gen-btn:nth-child(13) {
+            background-color: #B6A136;
+        }
 
-.equipe-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 8px 8px 0 #000;
-    background: #333;
-}
+        /* Roche    */
+        .ty-nav .gen-btn:nth-child(14) {
+            background-color: #735797;
+        }
 
-.combat-btn {
-    font-family: 'Press Start 2P', cursive;
-    font-size: 0.9rem;
-    padding: 10px 20px;
-    background: #333;
-    color: #fff;
-    border: 4px solid #000;
-    border-radius: 12px;
-    box-shadow: 6px 6px 0 #000;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+        /* Spectre  */
+        .ty-nav .gen-btn:nth-child(15) {
+            background-color: #6F35FC;
+        }
 
-.combat-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 8px 8px 0 #000;
-    background: #333;
-}
+        /* Dragon   */
+        .ty-nav .gen-btn:nth-child(16) {
+            background-color: #705746;
+        }
+
+        /* Ténèbres */
+        .ty-nav .gen-btn:nth-child(17) {
+            background-color: #B7B7CE;
+            color: #000;
+        }
+
+        /* Acier    */
+        .ty-nav .gen-btn:nth-child(18) {
+            background-color: #D685AD;
+        }
+
+        /* Fée      */
+
+        /* Effet hover commun */
+        .ty-nav .gen-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 7px 7px 0 #000;
+            filter: brightness(1.15);
+        }
+
+        /* Bouton actif (optionnel - si tu veux marquer le type sélectionné) */
+        .ty-nav .gen-btn.active {
+            box-shadow: 8px 8px 0 #000;
+            transform: translateY(-2px) scale(1.08);
+            border-color: #ffcb05;
+            outline: 3px solid rgba(255, 203, 5, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .ty-nav .gen-btn {
+                padding: 8px 12px;
+                font-size: 0.7rem;
+                min-width: 70px;
+            }
+        }
+
+        .connect-nav {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px 14px;
+            margin: 20px 0 30px;
+            padding: 0 10px;
+        }
+
+        .connect-nav .login-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            padding: 10px 16px;
+            color: #fff;
+            border: 3px solid #000;
+            border-radius: 10px;
+            box-shadow: 5px 5px 0 #000;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .connect-nav .login-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 7px 7px 0 #000;
+            filter: brightness(1.15);
+        }
+
+        .connect-nav .login-btn.active {
+            box-shadow: 8px 8px 0 #000;
+            transform: translateY(-2px) scale(1.08);
+            border-color: #ffcb05;
+            outline: 3px solid rgba(255, 203, 5, 0.5);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .connect-nav .login-btn {
+                padding: 8px 12px;
+                font-size: 0.7rem;
+                min-width: 70px;
+            }
+        }
+
+        .login-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: #fff;
+            border: 4px solid #000;
+            border-radius: 12px;
+            box-shadow: 6px 6px 0 #000;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 8px 8px 0 #000;
+            background: #666;
+        }
+
+        .login-btn.logged-in {
+            background: linear-gradient(45deg, #8b1626, #af1212);
+            color: #fff;
+            border: 4px solid #000;
+        }
+
+        .equipe-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            padding: 10px 20px;
+            background: #333;
+            color: #fff;
+            border: 4px solid #000;
+            border-radius: 12px;
+            box-shadow: 6px 6px 0 #000;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .equipe-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 8px 8px 0 #000;
+            background: #333;
+        }
+
+        .combat-btn {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            padding: 10px 20px;
+            background: #333;
+            color: #fff;
+            border: 4px solid #000;
+            border-radius: 12px;
+            box-shadow: 6px 6px 0 #000;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .combat-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 8px 8px 0 #000;
+            background: #333;
+        }
